@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Models
 {
-    public class User : IdentityUser
+    public class ApplicationUser : IdentityUser
     {
 
     }

@@ -12,14 +12,13 @@ using ServiceApi.services;
 
 namespace ServiceApi.Controllers
 {
-    [AllowAnonymous]
     public class SecurityController : BaseApiController
     {
-        private readonly UserManager<User> userManager;
-        private readonly SignInManager<User> signInManager;
+        private readonly UserManager<ApplicationUser> userManager;
+        private readonly SignInManager<ApplicationUser> signInManager;
         private readonly TokenService tokenService;
 
-        public SecurityController(UserManager<User> userManager, SignInManager<User> signInManager, TokenService tokenService)
+        public SecurityController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, TokenService tokenService)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
@@ -37,6 +36,7 @@ namespace ServiceApi.Controllers
             };
         }
 
+        [AllowAnonymous]
         [HttpPost("Login")]
         public async Task<ActionResult<UserDTO>> Login([FromBody] LoginDTO loginDetails)
         {
@@ -72,7 +72,7 @@ namespace ServiceApi.Controllers
 
             if (nameUser != null) return BadRequest("UserName already Exists");
 
-            var userApp = new User
+            var userApp = new ApplicationUser
             {
                 UserName = register.UserName,
                 Email = register.Email,
@@ -98,7 +98,7 @@ namespace ServiceApi.Controllers
             return CreateUserObject(user);
         }
 
-        private UserDTO CreateUserObject(User user)
+        private UserDTO CreateUserObject(ApplicationUser user)
         {
             return new UserDTO
             {

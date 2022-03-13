@@ -8,12 +8,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Context
 {
-    public class DocUpContext : IdentityDbContext<User>
+    public class DocUpContext : IdentityDbContext<ApplicationUser>
     {
         public DocUpContext(DbContextOptions options) : base(options)
         {
 
         }
-        public DbSet<User> User { get; set; }
+        public DbSet<ApplicationUser> User { get; set; }
     }
 }

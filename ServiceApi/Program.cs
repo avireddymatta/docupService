@@ -3,8 +3,8 @@ using Application.AutoMapper;
 using Domain.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Persistence.Context;
@@ -19,10 +19,12 @@ builder.Services.AddControllers(opt =>
 {
     var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
     opt.Filters.Add(new AuthorizeFilter(policy));
-}).AddJsonOptions(options =>
-{
-    options.JsonSerializerOptions.PropertyNamingPolicy = null;
-}); ;
+});
+
+// builder.Services.AddMvcCore()
+//     .AddAuthorization(); // Note - this is on the IMvcBuilder, not the service collection
+//.AddJsonFormatters(options => options.ContractResolver = new CamelCasePropertyNamesContractResolver());
+
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -34,12 +36,12 @@ builder.Services.AddDbContext<DocUpContext>(opt =>
 });
 
 builder.Services.AddAutoMapper(typeof(MappingProfiles).Assembly);
-builder.Services.AddIdentityCore<User>(opt =>
+builder.Services.AddIdentityCore<ApplicationUser>(opt =>
             {
                 opt.Password.RequireNonAlphanumeric = false;
             })
             .AddEntityFrameworkStores<DocUpContext>()
-            .AddSignInManager<SignInManager<User>>();
+            .AddSignInManager<SignInManager<ApplicationUser>>();
 
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -59,7 +61,7 @@ builder.Services.AddScoped<TokenService>();
 try
 {
     var contextService = builder.Services.BuildServiceProvider().GetService<DocUpContext>();
-    var userManager = builder.Services.BuildServiceProvider().GetService<UserManager<User>>();
+    var userManager = builder.Services.BuildServiceProvider().GetService<UserManager<ApplicationUser>>();
     await contextService!.Database.MigrateAsync();
     await UserDataSeed.SetUserDataSeed(contextService, userManager);
 }
@@ -84,7 +86,7 @@ app.UseCors(builder =>
  builder.WithOrigins("http://localhost:3000/").AllowAnyHeader().AllowAnyMethod()
  );
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
