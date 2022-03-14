@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using Persistence.Context;
 using Persistence.SeedData;
 using ServiceApi.services;
+using ServiceApi.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -74,6 +75,8 @@ catch (Exception ex)
 
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionMiddleWare>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
