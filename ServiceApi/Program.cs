@@ -11,6 +11,8 @@ using Persistence.Context;
 using Persistence.SeedData;
 using ServiceApi.services;
 using ServiceApi.Middleware;
+using Application.Repositories.Generic;
+using Application.Interfaces.Generic;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,6 +60,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 });
 
 builder.Services.AddScoped<TokenService>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
 try
 {
