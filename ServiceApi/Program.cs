@@ -22,11 +22,11 @@ builder.Services.AddControllers(opt =>
 {
     var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
     opt.Filters.Add(new AuthorizeFilter(policy));
+})
+.AddJsonOptions(configure =>
+{
+    configure.JsonSerializerOptions.PropertyNamingPolicy = null;
 });
-
-// builder.Services.AddMvcCore()
-//     .AddAuthorization(); // Note - this is on the IMvcBuilder, not the service collection
-//.AddJsonFormatters(options => options.ContractResolver = new CamelCasePropertyNamesContractResolver());
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -42,6 +42,8 @@ builder.Services.AddAutoMapper(typeof(MappingProfiles).Assembly);
 builder.Services.AddIdentityCore<ApplicationUser>(opt =>
             {
                 opt.Password.RequireNonAlphanumeric = false;
+                opt.Password.RequiredLength = 8;
+                opt.Password.RequireDigit = false;
             })
             .AddEntityFrameworkStores<DocUpContext>()
             .AddSignInManager<SignInManager<ApplicationUser>>();
@@ -59,6 +61,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     };
 });
 
+builder.Services.AddAutoMapper(typeof(MappingProfiles).Assembly);
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
@@ -90,7 +93,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors(builder =>
- builder.WithOrigins("http://localhost:3000/").AllowAnyHeader().AllowAnyMethod()
+ builder.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod()
  );
 
 //app.UseHttpsRedirection();

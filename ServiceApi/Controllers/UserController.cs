@@ -6,6 +6,8 @@ using Application.Interfaces.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ServiceApi.Infrastructure;
+using AutoMapper;
+using Application.DTO;
 
 namespace ServiceApi.Controllers
 {
@@ -17,10 +19,11 @@ namespace ServiceApi.Controllers
             _unitOfWork = unitOfWork;
         }
 
+        [AllowAnonymous]
         [HttpGet("GetUsers")]
         public async Task<IActionResult> GetUsers()
         {
-            return Ok(await _unitOfWork.Users.GetAll());
+            return Ok(_unitOfWork.mapper.Map<UserDetailsDTO[]>(await _unitOfWork.Users.GetAll()));
         }
     }
 }

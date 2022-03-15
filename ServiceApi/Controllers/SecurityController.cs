@@ -26,9 +26,9 @@ namespace ServiceApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<UserDTO>> GetData()
+        public async Task<ActionResult<UserTokenDTO>> GetData()
         {
-            return new UserDTO()
+            return new UserTokenDTO()
             {
                 Email = "Random",
                 Token = "ASDS",
@@ -38,7 +38,7 @@ namespace ServiceApi.Controllers
 
         [AllowAnonymous]
         [HttpPost("Login")]
-        public async Task<ActionResult<UserDTO>> Login([FromBody] LoginDTO loginDetails)
+        public async Task<ActionResult<UserTokenDTO>> Login([FromBody] LoginDTO loginDetails)
         {
             var user = await this.userManager.FindByEmailAsync(loginDetails.Email);
 
@@ -52,7 +52,7 @@ namespace ServiceApi.Controllers
             }
             else
             {
-                return new UserDTO()
+                return new UserTokenDTO()
                 {
                     Email = user.Email,
                     Token = this.tokenService.CreateToken(user),
@@ -61,8 +61,9 @@ namespace ServiceApi.Controllers
             }
         }
 
-        [HttpPost("register")]
-        public async Task<ActionResult<UserDTO>> Register(UserRegisterDTO register)
+        [AllowAnonymous]
+        [HttpPost("Register")]
+        public async Task<ActionResult<UserTokenDTO>> Register(UserRegisterDTO register)
         {
             var emailUser = await this.userManager.FindByEmailAsync(register.Email);
 
@@ -90,7 +91,7 @@ namespace ServiceApi.Controllers
 
         [Authorize]
         [HttpGet("GetCurrentUser/{email}")]
-        public async Task<ActionResult<UserDTO>> GetCurrentUser(string Email)
+        public async Task<ActionResult<UserTokenDTO>> GetCurrentUser(string Email)
         {
             //var user = await this.userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
 
@@ -98,9 +99,9 @@ namespace ServiceApi.Controllers
             return CreateUserObject(user);
         }
 
-        private UserDTO CreateUserObject(ApplicationUser user)
+        private UserTokenDTO CreateUserObject(ApplicationUser user)
         {
-            return new UserDTO
+            return new UserTokenDTO
             {
                 UserName = user.UserName,
                 Email = user.Email,

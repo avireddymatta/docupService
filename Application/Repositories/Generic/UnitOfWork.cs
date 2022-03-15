@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.Interfaces;
 using Application.Interfaces.Generic;
+using AutoMapper;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore.Storage;
 using Persistence.Context;
@@ -14,9 +15,12 @@ namespace Application.Repositories.Generic
     {
         private DocUpContext _context;
         private readonly Type ContextType;
-        public UnitOfWork(DocUpContext context)
+
+        private readonly IMapper _mapper;
+        public UnitOfWork(DocUpContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         private IDbContextTransaction BeginTransaction()
@@ -31,6 +35,8 @@ namespace Application.Repositories.Generic
                 return new GenericRepository<ApplicationUser>(_context);
             }
         }
+
+        IMapper IUnitOfWork.mapper => (_mapper);
 
         public async Task<bool> Complete()
         {
